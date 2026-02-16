@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Joe's Hotdog Stand</title>
+  <style>
+    body { font-family: sans-serif; max-width: 400px; margin: 2em auto; padding: 1em; }
+    h1 { color: #c41e3a; }
+    .order { background: #f5f5f5; padding: 1em; border-radius: 8px; }
+    .line { margin: 0.25em 0; }
+    .total { font-weight: bold; margin-top: 0.5em; }
+  </style>
+</head>
+<body>
+  <h1>Joe's Hotdog Stand</h1>
+  <div id="order" class="order"></div>
+
+  <script>
+    const PRICE_HOTDOG = 5.25;
+    const PRICE_FRIES = 3.75;
+    const PRICE_DRINK = 2.50;
+    const MEAL_DEAL_PRICE = 10;
+    const DISCOUNT_THRESHOLD = 30;
+    const DISCOUNT_PERCENT = 10;
+    const TAX_RATE = 0.0625;
+
+    alert(
+      "Joe's Hotdog Stand - Menu\n\n" +
+      "Hotdogs: $" + PRICE_HOTDOG + " each\n" +
+      "French Fries: $" + PRICE_FRIES + " each\n" +
+      "Drinks: $" + PRICE_DRINK + " each\n\n" +
+      "Specials:\n" +
+      "- Joe's Meal Deal: $10 (1 hot dog, 1 french fries, 1 drink)\n" +
+      "- 10% discount on orders of $30 or more (before tax)"
+    );
+
+    var numDogs = parseInt(prompt("How many hotdogs do you want?", "0"), 10) || 0;
+    var numFries = parseInt(prompt("How many fries do you want?", "0"), 10) || 0;
+    var numSoda = parseInt(prompt("How many sodas do you want?", "0"), 10) || 0;
+
+    function showMoney(num) {
+      var rounded = Math.round(num * 100) / 100;
+      var intPart = Math.floor(rounded);
+      var decPart = Math.round((rounded - intPart) * 100);
+      if (decPart < 0) decPart = -decPart;
+      var decStr = (decPart < 10 ? "0" : "") + decPart;
+      return intPart + "." + decStr;
+    }
+
+    var mealDeals = Math.min(numDogs, numFries, numSoda);
+    var numDogsRegular = numDogs - mealDeals;
+    var numFriesRegular = numFries - mealDeals;
+    var numSodaRegular = numSoda - mealDeals;
+
+    var subtotalBeforeDiscount = mealDeals * MEAL_DEAL_PRICE + numDogsRegular * PRICE_HOTDOG + numFriesRegular * PRICE_FRIES + numSodaRegular * PRICE_DRINK;
+
+    var discountAmount = 0;
+    if (subtotalBeforeDiscount >= DISCOUNT_THRESHOLD) {
+      discountAmount = Math.round(subtotalBeforeDiscount * (DISCOUNT_PERCENT / 100) * 100) / 100;
+    }
+    var subtotalAfterDiscount = subtotalBeforeDiscount - discountAmount;
+    var taxAmount = Math.round(subtotalAfterDiscount * TAX_RATE * 100) / 100;
+    var finalTotal = subtotalAfterDiscount + taxAmount;
+
+    var costHotdogsDisplay = numDogs * PRICE_HOTDOG;
+    var costFriesDisplay = numFries * PRICE_FRIES;
+    var costDrinksDisplay = numSoda * PRICE_DRINK;
+    var mealDealSavings = mealDeals * (PRICE_HOTDOG + PRICE_FRIES + PRICE_DRINK - MEAL_DEAL_PRICE);
+
+    var html = "";
+    html += "<div class=\"line\">Hotdogs: " + numDogs + " &times; $" + showMoney(PRICE_HOTDOG) + " = $" + showMoney(costHotdogsDisplay) + "</div>";
+    html += "<div class=\"line\">French Fries: " + numFries + " &times; $" + showMoney(PRICE_FRIES) + " = $" + showMoney(costFriesDisplay) + "</div>";
+    html += "<div class=\"line\">Drinks: " + numSoda + " &times; $" + showMoney(PRICE_DRINK) + " = $" + showMoney(costDrinksDisplay) + "</div>";
+    if (mealDeals > 0) {
+      html += "<div class=\"line\">Meal deal (" + mealDeals + "): -$" + showMoney(mealDealSavings) + "</div>";
+    }
+    html += "<div class=\"line\">Subtotal before discount: $" + showMoney(subtotalBeforeDiscount) + "</div>";
+    if (discountAmount > 0) {
+      html += "<div class=\"line\">Discount (10%): -$" + showMoney(discountAmount) + "</div>";
+    }
+    html += "<div class=\"line\">Subtotal after discount: $" + showMoney(subtotalAfterDiscount) + "</div>";
+    html += "<div class=\"line\">Tax (6.25%): $" + showMoney(taxAmount) + "</div>";
+    html += "<div class=\"line total\">Final total: $" + showMoney(finalTotal) + "</div>";
+    document.getElementById("order").innerHTML = html;
+  </script>
+</body>
+</html>
+</think>
